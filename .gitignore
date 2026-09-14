@@ -1,0 +1,55 @@
+# ==========================================
+# Python Virtual Environments
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+
+# ==========================================
+# Vector Database (ChromaDB)
+# ==========================================
+chroma_db/
+.chroma_data/
+*.log
+chroma.log
+*.sqlite-journal
+*.sqlite-wal
+
+# ==========================================
+# Local Databases & Environments
+# ==========================================
+*.sqlite
+*.sqlite3
+*.db
+.env
+
+# ==========================================
+# Byte-compiled / optimized / DLL files
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================================
+# IDEs and Editors (PyCharm & VS Code)
+# ==========================================
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# ==========================================
+# macOS System Files
+# ==========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.Trashes
