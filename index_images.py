@@ -5,21 +5,17 @@ import uuid
 from pathlib import Path
 
 import chromadb
-import clip
 import torch
 from PIL import Image
+from sentence_transformers import SentenceTransformer
 
-IMAGE_FOLDER = Path("~/Pictures/Fotoarchiv/Handyfotos").expanduser()  # path to the folder containing images
-DATABASE_FILE = "./chroma_db"
-
-device = "cpu"
-model_name = "ViT-L/14"
+from config import DATABASE_PATH, IMAGE_MODEL, IMAGE_FOLDER, COLLECTION_NAME
 
 # initialize the ChromaDB client
-chroma_client = chromadb.PersistentClient(path=DATABASE_FILE)
+chroma_client = chromadb.PersistentClient(path=DATABASE_PATH)
 
 # create collection for images if it doesn't exist, otherwise load it
-collection = chroma_client.get_or_create_collection(name="search_images", metadata={"hnsw:space": "cosine"})
+collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME, metadata={"hnsw:space": "cosine"})
 
 
 def get_image_paths(image_folder):
@@ -56,7 +52,7 @@ if __name__ == '__main__':
 
     # save in vector database
     print("Load Clip...")
-    model, preprocess = clip.load(model_name, device=device)
+    model = SentenceTransformer(IMAGE_MODEL)
     print("Clip loaded.")
 
     existing = collection.get(
@@ -81,16 +77,8 @@ if __name__ == '__main__':
         try:
             image = Image.open(image_path).convert("RGB")
 
-            inputs = preprocess(image).unsqueeze(0).to(device)
-
             with torch.no_grad():
-                image_features = model.encode_image(inputs)
-            image_features /= image_features.norm(dim=-1, keepdim=True)
-
-            # turn image in vector list for database storage
-            # .cpu() is important to move the tensor back to CPU memory, especially if you're using a GPU or MPS device.
-            # This ensures that the data can be serialized and stored in the database without issues.
-            vector = image_features.cpu().flatten().tolist()
+                vector = model.encode(image).tolist()
 
             unique_id = str(uuid.uuid4())
             p = Path(image_path)

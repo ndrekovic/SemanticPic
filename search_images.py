@@ -1,33 +1,30 @@
 import chromadb
-import clip
 import torch
+from sentence_transformers import SentenceTransformer
 
-from index_images import model_name
+from config import TEXT_MODEL, DATABASE_PATH, COLLECTION_NAME, DEFAULT_N_RESULTS
 
 
 def initialize_search():
     # load clip model for text search
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model, _ = clip.load(model_name, device=device)
+    model = SentenceTransformer(TEXT_MODEL)
 
     # establish connection to the existing ChromaDB
-    chroma_client = chromadb.PersistentClient(path="./chroma_db")
-    collection = chroma_client.get_collection(name="search_images")
+    chroma_client = chromadb.PersistentClient(path=DATABASE_PATH)
+    collection = chroma_client.get_collection(name=COLLECTION_NAME)
     return model, collection, device
 
 
-def search_images(search_query, model, collection, device, n_results=3):  # retrieve the search term from the user
+def search_images(search_query, model, collection, device,
+                  n_results=DEFAULT_N_RESULTS):  # retrieve the search term from the user
 
-    # turn the search query into a vector using CLIP
-    text = clip.tokenize([search_query]).to(device)
     with torch.no_grad():
-        text_features = model.encode_text(text)
-        text_features /= text_features.norm(dim=-1, keepdim=True)
-        text_vector = text_features.cpu().numpy().flatten().tolist()
+        text_embedding = model.encode(search_query, normalize_embeddings=True).tolist()
 
     # get the top 3 results from the database based on the text vector
     results = collection.query(
-        query_embeddings=[text_vector],
+        query_embeddings=[text_embedding],
         n_results=n_results,
         include=["documents", "distances"]
     )

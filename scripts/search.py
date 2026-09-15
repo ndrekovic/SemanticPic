@@ -7,7 +7,7 @@ client = chromadb.PersistentClient(path="../chroma_db")
 
 # Use the same CLIP model as during indexing
 model, preprocess = clip.load(
-    "ViT-L/14",
+    "ViT-B/32",
     device=device
 )
 

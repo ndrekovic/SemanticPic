@@ -9,7 +9,8 @@ def reset_database():
 
     # Method 1: Delete the collection via the Chroma client
     try:
-        chroma_client = chromadb.PersistentClient(path="../chroma_db")
+        chroma_client = chromadb.PersistentClient(
+            path="/Users/nedimdrekovic/PycharmProjects/local_image_search/chroma_db")
         # List all collections
         collections = chroma_client.list_collections()
 
@@ -25,7 +26,7 @@ def reset_database():
 
     # Method 2: Delete the physical folder forcefully (the safest method)
     # This removes all corrupt leftovers, lock files, and indexes from disk
-    db_folder = "./chroma_db"
+    db_folder = ".././chroma_db"
     if os.path.exists(db_folder):
         try:
             shutil.rmtree(db_folder)

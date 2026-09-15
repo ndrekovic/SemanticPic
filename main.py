@@ -3,6 +3,7 @@ import os
 
 import streamlit as st
 
+from config import DEFAULT_N_RESULTS
 # import functions from search image file
 from search_images import initialize_search, search_images
 
@@ -51,7 +52,7 @@ with col2:
         "Number of results",
         min_value=1,
         max_value=20,
-        value=3,
+        value=DEFAULT_N_RESULTS,
         step=1,
         label_visibility="collapsed"
     )
