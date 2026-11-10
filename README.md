@@ -1,4 +1,4 @@
-# ChromaLens – Semantic Image Search with ChromaDB
+# SemanticPic – Semantic Image Search with ChromaDB
 
 A local, AI-powered image search engine built with Python. This project utilizes a **CLIP (Vision Transformer) model**
 to analyze images from local directories, convert them into mathematical vectors (embeddings), and store them in a
